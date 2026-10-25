@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.cryptora.app.data.AppPreferences
 import com.cryptora.app.data.AssetWordSource
+import com.cryptora.app.data.PuzzleText
 import com.cryptora.app.data.RecentSearch
 import com.cryptora.app.data.SearchEngine
 import com.cryptora.app.data.SorteerOptie
@@ -58,18 +59,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         Taal.FRANS -> StringsFR
     }
 
-    /**
-     * Patroon-veld: bekende letters op hun eigen positie, met "." als enige
-     * wildcard voor een onbekende letter (bv. "s.r.er"). Bepaalt ook de
-     * woordlengte. Alleen letters en "." zijn toegestaan; alle andere tekens
-     * (inclusief spaties) worden bij het typen genegeerd.
-     *
-     * Let op "ij": dat telt hier bewust als twee losse tekens (i en j), niet
-     * als één letter/ligatuur. Dat is consistent met hoe de woordenlijst zelf
-     * is opgeslagen en hoe het patroon tegen een woord gematcht wordt, dus de
-     * teller in de UI en de daadwerkelijke match kunnen nooit uit elkaar
-     * lopen.
-     */
+    /** Patroon in leesbare vorm; ij telt als één Nederlandse puzzelletter. */
     var patroon by mutableStateOf("")
         private set
 
@@ -87,7 +77,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         private set
     var lengte by mutableStateOf("")
         private set
-    var eigenWoorden by mutableStateOf("")
+    var eigenWoorden by mutableStateOf(preferences.eigenWoorden.words(taal.name))
         private set
 
     var result by mutableStateOf(SearchEngine.Result.empty())
@@ -138,6 +128,9 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         }
 
         woordenlijstGereed = false
+        wordSource = null
+        laadFout = false
+        result = SearchEngine.Result.empty()
         viewModelScope.launch {
             try {
                 val source = withContext(Dispatchers.IO) {
@@ -145,7 +138,11 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
                     // forceert daarnaast de index-per-woordlengte — allebei nu
                     // vast op de IO-thread, zodat de eerste zoekopdracht niets
                     // meer hoeft te berekenen op de main thread.
-                    AssetWordSource(getApplication(), assetName = doelTaal.assetBestand).also {
+                    AssetWordSource(
+                        getApplication(),
+                        assetName = doelTaal.assetBestand,
+                        ijAsLetter = doelTaal == Taal.NEDERLANDS
+                    ).also {
                         it.size()
                         it.ofLength(0)
                     }
@@ -157,6 +154,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
                     wordSource = source
                     woordenboekGrootte = source.size()
                     woordenlijstGereed = true
+                    laadFout = false
                     zoekLive()
                 }
             } catch (e: Exception) {
@@ -183,6 +181,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         if (nieuweTaal == taal) return
         taal = nieuweTaal
         preferences.taal = nieuweTaal
+        eigenWoorden = preferences.eigenWoorden.words(nieuweTaal.name)
         recenteZoekopdrachten = recenteZoekopdrachtenVoorHuidigeTaal()
         laadEnActiveer(nieuweTaal)
     }
@@ -191,14 +190,14 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
     private fun recenteZoekopdrachtenVoorHuidigeTaal(): List<RecentSearch> =
         preferences.recenteZoekopdrachten().filter { it.taal == taal }
 
-    /** Alleen letters en "." toegestaan; overige tekens (o.a. spaties) worden genegeerd. */
+    /** Accentletters naar basisletters, alle ondersteunde jokers naar punten. */
     fun onPatroonChange(value: String) {
-        patroon = value.filter { it.isLetter() || it == '.' }
+        patroon = PuzzleText.patternInput(value)
     }
 
-    /** Alleen letters toegestaan; overige tekens (o.a. spaties) worden genegeerd. */
+    /** Dezelfde basisletters als de zoekmachine, met leesbare ij in de invoer. */
     fun onAnagramChange(value: String) {
-        anagram = value.filter { it.isLetter() }
+        anagram = PuzzleText.lettersInput(value)
     }
 
     fun onZoektermChange(value: String) { zoekterm = value }
@@ -209,7 +208,15 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         if (value.length <= 3 && value.all { it.isDigit() }) lengte = value
     }
 
-    fun onEigenWoordenChange(value: String) { eigenWoorden = value }
+    fun voegEigenWoordenToe(value: String) {
+        eigenWoorden = preferences.eigenWoorden.add(taal.name, value)
+        zoekLive()
+    }
+
+    fun verwijderEigenWoord(woord: String) {
+        eigenWoorden = preferences.eigenWoorden.remove(taal.name, woord)
+        zoekLive()
+    }
 
     private fun huidigeQuery(): SearchEngine.Query = SearchEngine.Query(
         pattern = patroon,
@@ -221,15 +228,18 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         // zodra het gevuld is, betekent dat altijd "exact deze letters",
         // nooit meer het oude "bevat deze letters"-gedrag.
         anagramMode = true,
-        customWords = eigenWoorden
+        customWords = eigenWoorden.joinToString("\n"),
+        ijAsLetter = taal == Taal.NEDERLANDS
     )
 
     /** Draait live (met debounce) terwijl de gebruiker typt. */
     fun zoekLive() {
         val source = wordSource ?: return
         val query = huidigeQuery()
-        heeftGezocht = !query.isBlank
-        val gevonden = if (query.isBlank) SearchEngine.Result.empty() else SearchEngine.search(query, source)
+        // Opgeslagen woorden zijn kandidaten, geen zoekopdracht op zichzelf.
+        val leeg = query.copy(customWords = "").isBlank
+        heeftGezocht = !leeg
+        val gevonden = if (leeg) SearchEngine.Result.empty() else SearchEngine.search(query, source)
         result = if (sorteerOptie == SorteerOptie.ALFABETISCH && gevonden.words.isNotEmpty()) {
             gevonden.copy(words = gevonden.words.sorted())
         } else {
@@ -250,7 +260,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
 
     /** Bewaart de huidige zoekopdracht in de historie (na een langere stilte tijdens het typen). */
     fun onZoekopdrachtBevestigd() {
-        if (huidigeQuery().isBlank || result.totalMatches == 0) return
+        if (!heeftGezocht || result.totalMatches == 0) return
         val recent = RecentSearch(
             pattern = patroon.trim(),
             searchTerm = zoekterm.trim(),
@@ -315,8 +325,7 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         val anagram: String,
         val zoekterm: String,
         val uitgeslotenLetters: String,
-        val lengte: String,
-        val eigenWoorden: String
+        val lengte: String
     )
 
     private var laatsteWissing: GewisteInvoer? = null
@@ -327,15 +336,13 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
             anagram = anagram,
             zoekterm = zoekterm,
             uitgeslotenLetters = uitgeslotenLetters,
-            lengte = lengte,
-            eigenWoorden = eigenWoorden
+            lengte = lengte
         )
         patroon = ""
         anagram = ""
         zoekterm = ""
         uitgeslotenLetters = ""
         lengte = ""
-        eigenWoorden = ""
         result = SearchEngine.Result.empty()
         heeftGezocht = false
     }
@@ -348,7 +355,6 @@ class CryptogramViewModel(application: Application) : AndroidViewModel(applicati
         zoekterm = vorige.zoekterm
         uitgeslotenLetters = vorige.uitgeslotenLetters
         lengte = vorige.lengte
-        eigenWoorden = vorige.eigenWoorden
         laatsteWissing = null
         zoekLive()
     }

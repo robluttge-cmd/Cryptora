@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -72,6 +74,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -101,6 +104,7 @@ import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.cryptora.app.data.PuzzleText
 import com.cryptora.app.data.MatchHighlighter
 import com.cryptora.app.data.RecentSearch
 import com.cryptora.app.data.SearchEngine
@@ -243,6 +247,7 @@ fun CryptogramScreen(viewModel: CryptogramViewModel = viewModel()) {
                         heeftGezocht = viewModel.heeftGezocht,
                         result = viewModel.result,
                         patroon = viewModel.patroon,
+                        ijAsLetter = viewModel.taal == Taal.NEDERLANDS,
                         sorteerOptie = viewModel.sorteerOptie,
                         onSorteerOptieKies = viewModel::zetSorteerOptie,
                         onTerugClick = { toonResultatenScherm = false },
@@ -318,7 +323,8 @@ fun CryptogramScreen(viewModel: CryptogramViewModel = viewModel()) {
         if (toonEigenWoorden) {
             EigenWoordenDialog(
                 eigenWoorden = viewModel.eigenWoorden,
-                onEigenWoordenChange = viewModel::onEigenWoordenChange,
+                onToevoegen = viewModel::voegEigenWoordenToe,
+                onVerwijderen = viewModel::verwijderEigenWoord,
                 onSluiten = { toonEigenWoorden = false }
             )
         }
@@ -349,6 +355,7 @@ private fun InvoerScherm(
         modifier = Modifier
             .widthIn(max = 520.dp)
             .fillMaxWidth()
+            .imePadding()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp, vertical = 24.dp)
     ) {
@@ -356,18 +363,30 @@ private fun InvoerScherm(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        PatroonKaart(patroon = viewModel.patroon, onPatroonChange = viewModel::onPatroonChange)
+        PatroonKaart(
+            patroon = viewModel.patroon,
+            onPatroonChange = viewModel::onPatroonChange,
+            ijAsLetter = viewModel.taal == Taal.NEDERLANDS,
+            onZoeken = onZoekenClick,
+            onWissen = onWissen
+        )
 
         Spacer(modifier = Modifier.height(14.dp))
 
-        AnagramKaart(anagram = viewModel.anagram, onAnagramChange = viewModel::onAnagramChange)
+        AnagramKaart(
+            anagram = viewModel.anagram,
+            onAnagramChange = viewModel::onAnagramChange,
+            ijAsLetter = viewModel.taal == Taal.NEDERLANDS,
+            onZoeken = onZoekenClick,
+            onWissen = onWissen
+        )
 
         Spacer(modifier = Modifier.height(14.dp))
 
         NavigatieRij(
             icoon = Icons.AutoMirrored.Filled.MenuBook,
             titel = t.customWordsTitle,
-            subtitel = t.customWordsSubtitle,
+            subtitel = t.customWordsCount(viewModel.eigenWoorden.size),
             onClick = onEigenWoordenClick
         )
 
@@ -379,40 +398,6 @@ private fun InvoerScherm(
             subtitel = t.moreOptionsSubtitle,
             onClick = onMeerOptiesClick
         )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Button(
-            onClick = onZoekenClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondary,
-                contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-        ) {
-            Text(
-                text = t.searchButton,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-        }
-
-        Spacer(modifier = Modifier.height(10.dp))
-
-        OutlinedButton(
-            onClick = onWissen,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(14.dp)
-        ) {
-            Icon(Icons.Filled.Clear, contentDescription = t.clearAllContentDescription, modifier = Modifier.size(18.dp))
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(t.clearAllButton)
-        }
 
         if (viewModel.recenteZoekopdrachten.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
@@ -530,7 +515,13 @@ private fun Header(onHelpClick: () -> Unit, onInstellingenClick: () -> Unit) {
  * samen met Anagram de belangrijkste invoer is.
  */
 @Composable
-private fun PatroonKaart(patroon: String, onPatroonChange: (String) -> Unit) {
+private fun PatroonKaart(
+    patroon: String,
+    onPatroonChange: (String) -> Unit,
+    ijAsLetter: Boolean,
+    onZoeken: () -> Unit,
+    onWissen: () -> Unit
+) {
     val t = LocalStrings.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -558,7 +549,7 @@ private fun PatroonKaart(patroon: String, onPatroonChange: (String) -> Unit) {
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                TellerChip(tekst = t.patternCounter(patroon.length), getint = true)
+                TellerChip(tekst = t.patternCounter(PuzzleText.patternKey(patroon, ijAsLetter).length), getint = true)
             }
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -569,7 +560,8 @@ private fun PatroonKaart(patroon: String, onPatroonChange: (String) -> Unit) {
                 singleLine = true,
                 shape = RoundedCornerShape(14.dp),
                 colors = veldKleuren(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { onZoeken() })
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -577,6 +569,8 @@ private fun PatroonKaart(patroon: String, onPatroonChange: (String) -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(10.dp))
+            ZoekActies(onZoeken = onZoeken, onWissen = onWissen)
         }
     }
 }
@@ -586,7 +580,13 @@ private fun PatroonKaart(patroon: String, onPatroonChange: (String) -> Unit) {
  * Onafhankelijk van het Patroon-veld — beide mogen tegelijk ingevuld zijn.
  */
 @Composable
-private fun AnagramKaart(anagram: String, onAnagramChange: (String) -> Unit) {
+private fun AnagramKaart(
+    anagram: String,
+    onAnagramChange: (String) -> Unit,
+    ijAsLetter: Boolean,
+    onZoeken: () -> Unit,
+    onWissen: () -> Unit
+) {
     val t = LocalStrings.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
@@ -614,7 +614,7 @@ private fun AnagramKaart(anagram: String, onAnagramChange: (String) -> Unit) {
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                TellerChip(tekst = t.anagramCounter(anagram.length), getint = false)
+                TellerChip(tekst = t.anagramCounter(PuzzleText.letterCount(anagram, ijAsLetter)), getint = false)
             }
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -625,7 +625,8 @@ private fun AnagramKaart(anagram: String, onAnagramChange: (String) -> Unit) {
                 singleLine = true,
                 shape = RoundedCornerShape(14.dp),
                 colors = veldKleuren(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                keyboardActions = KeyboardActions(onSearch = { onZoeken() })
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
@@ -633,6 +634,37 @@ private fun AnagramKaart(anagram: String, onAnagramChange: (String) -> Unit) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+            Spacer(modifier = Modifier.height(10.dp))
+            ZoekActies(onZoeken = onZoeken, onWissen = onWissen)
+        }
+    }
+}
+
+/** Zoek- en wisknoppen bij ieder hoofdveld, ook bereikbaar met het toetsenbord open. */
+@Composable
+private fun ZoekActies(onZoeken: () -> Unit, onWissen: () -> Unit) {
+    val t = LocalStrings.current
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        OutlinedButton(
+            onClick = onWissen,
+            modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+            shape = RoundedCornerShape(14.dp)
+        ) {
+            Text(t.clearAllButton)
+        }
+        Button(
+            onClick = onZoeken,
+            modifier = Modifier.weight(1f).heightIn(min = 48.dp),
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+        ) {
+            Text(t.searchButton)
         }
     }
 }
@@ -810,22 +842,29 @@ private fun MeerOptiesDialog(
 
 @Composable
 private fun EigenWoordenDialog(
-    eigenWoorden: String,
-    onEigenWoordenChange: (String) -> Unit,
+    eigenWoorden: List<String>,
+    onToevoegen: (String) -> Unit,
+    onVerwijderen: (String) -> Unit,
     onSluiten: () -> Unit
 ) {
     val t = LocalStrings.current
+    var invoer by rememberSaveable { mutableStateOf("") }
+    val kanToevoegen = SearchEngine.parseCustomWords(invoer).isNotEmpty()
+    fun toevoegen() {
+        if (kanToevoegen) {
+            onToevoegen(invoer)
+            invoer = ""
+        }
+    }
     AlertDialog(
         onDismissRequest = onSluiten,
-        confirmButton = {
-            TextButton(onClick = onSluiten) { Text(t.settingsClose) }
-        },
+        confirmButton = { TextButton(onClick = onSluiten) { Text(t.settingsClose) } },
         containerColor = MaterialTheme.colorScheme.surface,
         titleContentColor = MaterialTheme.colorScheme.onBackground,
         textContentColor = MaterialTheme.colorScheme.onBackground,
         title = { Text(t.customWordsDialogTitle) },
         text = {
-            Column {
+            Column(modifier = Modifier.heightIn(max = 440.dp).verticalScroll(rememberScrollState())) {
                 Text(
                     text = t.customWordsDialogBody,
                     style = MaterialTheme.typography.bodySmall,
@@ -833,16 +872,44 @@ private fun EigenWoordenDialog(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
-                    value = eigenWoorden,
-                    onValueChange = onEigenWoordenChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp),
+                    value = invoer,
+                    onValueChange = { invoer = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text(t.customWordsTitle) },
                     placeholder = { Text(t.customWordsDialogPlaceholder, color = hintKleur()) },
+                    minLines = 2,
+                    maxLines = 3,
                     shape = RoundedCornerShape(14.dp),
-                    colors = veldKleuren(),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
+                    colors = veldKleuren()
                 )
+                Spacer(modifier = Modifier.height(8.dp))
+                Button(
+                    onClick = { toevoegen() },
+                    enabled = kanToevoegen,
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(t.customWordsAddButton) }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(t.customWordsCount(eigenWoorden.size), style = MaterialTheme.typography.labelLarge)
+                if (eigenWoorden.isEmpty()) {
+                    Text(t.customWordsEmptyText, style = MaterialTheme.typography.bodySmall)
+                } else {
+                    LazyColumn(modifier = Modifier.heightIn(max = 160.dp)) {
+                        items(eigenWoorden, key = { it }) { woord ->
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(woord, modifier = Modifier.weight(1f))
+                                IconButton(onClick = { onVerwijderen(woord) }) {
+                                    Icon(
+                                        Icons.Filled.Clear,
+                                        contentDescription = t.customWordsRemoveDescription(woord)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     )
@@ -1077,6 +1144,7 @@ private fun ResultatenScherm(
     heeftGezocht: Boolean,
     result: SearchEngine.Result,
     patroon: String,
+    ijAsLetter: Boolean,
     sorteerOptie: SorteerOptie,
     onSorteerOptieKies: (SorteerOptie) -> Unit,
     onTerugClick: () -> Unit,
@@ -1184,6 +1252,7 @@ private fun ResultatenScherm(
                                 WoordRij(
                                     woord = woord,
                                     patroon = patroon,
+                                    ijAsLetter = ijAsLetter,
                                     onClick = { onWoordGetikt(woord) },
                                     modifier = Modifier.animateItem()
                                 )
@@ -1198,9 +1267,9 @@ private fun ResultatenScherm(
 
 /** Bouwt de woordtekst op met de letters die matchen met het patroon gemarkeerd. */
 @Composable
-private fun matchAnnotatedWoord(woord: String, patroon: String): AnnotatedString {
+private fun matchAnnotatedWoord(woord: String, patroon: String, ijAsLetter: Boolean): AnnotatedString {
     val matchKleur = MaterialTheme.colorScheme.secondary
-    val gemarkeerd = MatchHighlighter.matchedIndices(woord, patroon)
+    val gemarkeerd = MatchHighlighter.matchedIndices(woord, patroon, ijAsLetter)
 
     return buildAnnotatedString {
         for (i in woord.indices) {
@@ -1219,6 +1288,7 @@ private fun matchAnnotatedWoord(woord: String, patroon: String): AnnotatedString
 private fun WoordRij(
     woord: String,
     patroon: String,
+    ijAsLetter: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -1240,7 +1310,7 @@ private fun WoordRij(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = matchAnnotatedWoord(woord, patroon),
+                text = matchAnnotatedWoord(woord, patroon, ijAsLetter),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )

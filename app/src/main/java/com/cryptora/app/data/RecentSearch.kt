@@ -2,8 +2,8 @@ package com.cryptora.app.data
 
 /**
  * Eén bewaarde zoekopdracht voor de "recente zoekopdrachten"-rij. Bewust
- * zonder "eigen woorden" (die zijn sessie-gebonden en hoeven niet blijvend
- * bewaard te worden).
+ * zonder "eigen woorden": de blijvende woordenlijst wordt apart per taal
+ * bewaard en is ook bij een herhaalde zoekopdracht beschikbaar.
  *
  * [taal] onthoudt in welke taal deze zoekopdracht is gedaan, zodat de
  * geschiedenis per taal apart getoond kan worden: een patroon dat in het

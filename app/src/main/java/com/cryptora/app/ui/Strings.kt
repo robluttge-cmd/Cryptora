@@ -74,6 +74,10 @@ data class Strings(
     val customWordsDialogTitle: String,
     val customWordsDialogBody: String,
     val customWordsDialogPlaceholder: String,
+    val customWordsAddButton: String,
+    val customWordsEmptyText: String,
+    val customWordsCount: (Int) -> String,
+    val customWordsRemoveDescription: (String) -> String,
 
     val resultsBackContentDescription: String,
     val resultsTitle: String,
@@ -110,12 +114,12 @@ val StringsNL = Strings(
 
     patternTitle = "Patroon",
     patternPlaceholder = "bijv. s.r.er of ......",
-    patternHelper = "Gebruik punten voor onbekende letters.",
-    patternCounter = { n -> if (n == 1) "1 teken" else "$n tekens" },
+    patternHelper = "Punt = onbekende letter. IJ telt als één letter; é = e, ï = i.",
+    patternCounter = { n -> if (n == 1) "1 letter" else "$n letters" },
 
     anagramTitle = "Anagram",
     anagramPlaceholder = "bijv. server",
-    anagramHelper = "Typ alle letters die je hebt, de volgorde maakt niet uit.",
+    anagramHelper = "Gebruik alle letters. Houd ij bij elkaar als één letter; accenten tellen niet mee.",
     anagramCounter = { n -> if (n == 1) "1 letter" else "$n letters" },
 
     customWordsTitle = "Eigen woorden",
@@ -124,8 +128,8 @@ val StringsNL = Strings(
     moreOptionsSubtitle = "Zoekterm, lengte, uitgesloten letters",
 
     searchButton = "Zoeken",
-    clearAllButton = "Alles wissen",
-    clearAllContentDescription = "Alles wissen",
+    clearAllButton = "Wis invoer",
+    clearAllContentDescription = "Wis invoer",
 
     recentLabel = "Recent",
     recentClear = "Wissen",
@@ -166,9 +170,12 @@ val StringsNL = Strings(
     moreOptionsExcludedHelper = "Woorden met deze letters worden uitgesloten.",
 
     customWordsDialogTitle = "Eigen woorden",
-    customWordsDialogBody = "Voeg tijdelijk extra woorden toe die niet in de standaardlijst " +
-        "staan, bijvoorbeeld namen of vakjargon. Ze tellen mee bij Patroon en Anagram.",
+    customWordsDialogBody = "Voeg woorden toe met de knop Toevoegen. Ze worden per taal bewaard en automatisch meegenomen bij het zoeken. Wis invoer verwijdert je bewaarde woorden niet.",
     customWordsDialogPlaceholder = "Woorden gescheiden door spaties, komma's of nieuwe regels.",
+    customWordsAddButton = "Toevoegen",
+    customWordsEmptyText = "Je hebt nog geen eigen woorden toegevoegd.",
+    customWordsCount = { n -> if (n == 1) "1 eigen woord bewaard" else "$n eigen woorden bewaard" },
+    customWordsRemoveDescription = { woord -> "Verwijder $woord" },
 
     resultsBackContentDescription = "Terug naar zoekvelden",
     resultsTitle = "Resultaten",
@@ -189,7 +196,7 @@ val StringsNL = Strings(
 
     footerText = { n -> "Doorzoekt ± $n Nederlandse woorden, volledig offline op je toestel." },
 
-    undoSnackbarText = "Alles gewist",
+    undoSnackbarText = "Zoekinvoer gewist",
     undoSnackbarAction = "Ongedaan maken",
 
     themaLabel = { keuze ->
@@ -226,12 +233,12 @@ val StringsEN = Strings(
 
     patternTitle = "Pattern",
     patternPlaceholder = "e.g. s.r.er or ......",
-    patternHelper = "Use dots for unknown letters.",
+    patternHelper = "Use dots for unknown letters. Accents are treated as base letters.",
     patternCounter = { n -> if (n == 1) "1 character" else "$n characters" },
 
     anagramTitle = "Anagram",
     anagramPlaceholder = "e.g. server",
-    anagramHelper = "Type all the letters you have, in any order.",
+    anagramHelper = "Type all the letters in any order. Accents are treated as base letters.",
     anagramCounter = { n -> if (n == 1) "1 letter" else "$n letters" },
 
     customWordsTitle = "Custom words",
@@ -240,8 +247,8 @@ val StringsEN = Strings(
     moreOptionsSubtitle = "Search term, length, excluded letters",
 
     searchButton = "Search",
-    clearAllButton = "Clear all",
-    clearAllContentDescription = "Clear all",
+    clearAllButton = "Clear input",
+    clearAllContentDescription = "Clear input",
 
     recentLabel = "Recent",
     recentClear = "Clear",
@@ -281,9 +288,12 @@ val StringsEN = Strings(
     moreOptionsExcludedHelper = "Words containing these letters are excluded.",
 
     customWordsDialogTitle = "Custom words",
-    customWordsDialogBody = "Temporarily add extra words that aren't in the standard list, " +
-        "such as names or jargon. They count towards Pattern and Anagram.",
+    customWordsDialogBody = "Use Add to save words for this language. They are automatically included in searches and kept when you clear the search input.",
     customWordsDialogPlaceholder = "Words separated by spaces, commas or new lines.",
+    customWordsAddButton = "Add",
+    customWordsEmptyText = "No custom words saved yet.",
+    customWordsCount = { n -> if (n == 1) "1 custom word saved" else "$n custom words saved" },
+    customWordsRemoveDescription = { word -> "Remove $word" },
 
     resultsBackContentDescription = "Back to search fields",
     resultsTitle = "Results",
@@ -341,12 +351,12 @@ val StringsES = Strings(
 
     patternTitle = "Patrón",
     patternPlaceholder = "p. ej. s.r.er o ......",
-    patternHelper = "Usa puntos para las letras desconocidas.",
+    patternHelper = "Usa puntos para letras desconocidas. Los acentos no cuentan.",
     patternCounter = { n -> if (n == 1) "1 carácter" else "$n caracteres" },
 
     anagramTitle = "Anagrama",
     anagramPlaceholder = "p. ej. server",
-    anagramHelper = "Escribe todas las letras que tengas, el orden no importa.",
+    anagramHelper = "Escribe todas las letras en cualquier orden. Los acentos no cuentan.",
     anagramCounter = { n -> if (n == 1) "1 letra" else "$n letras" },
 
     customWordsTitle = "Palabras propias",
@@ -355,8 +365,8 @@ val StringsES = Strings(
     moreOptionsSubtitle = "Término de búsqueda, longitud, letras excluidas",
 
     searchButton = "Buscar",
-    clearAllButton = "Borrar todo",
-    clearAllContentDescription = "Borrar todo",
+    clearAllButton = "Borrar campos",
+    clearAllContentDescription = "Borrar campos",
 
     recentLabel = "Recientes",
     recentClear = "Borrar",
@@ -397,9 +407,12 @@ val StringsES = Strings(
     moreOptionsExcludedHelper = "Se excluyen las palabras que contengan estas letras.",
 
     customWordsDialogTitle = "Palabras propias",
-    customWordsDialogBody = "Añade temporalmente palabras adicionales que no estén en la " +
-        "lista estándar, como nombres o jerga. Se tienen en cuenta en Patrón y Anagrama.",
+    customWordsDialogBody = "Pulsa Añadir para guardar palabras en este idioma. Se incluyen en las búsquedas y se conservan al borrar los campos.",
     customWordsDialogPlaceholder = "Palabras separadas por espacios, comas o saltos de línea.",
+    customWordsAddButton = "Añadir",
+    customWordsEmptyText = "Todavía no hay palabras propias guardadas.",
+    customWordsCount = { n -> if (n == 1) "1 palabra guardada" else "$n palabras guardadas" },
+    customWordsRemoveDescription = { word -> "Eliminar $word" },
 
     resultsBackContentDescription = "Volver a los campos de búsqueda",
     resultsTitle = "Resultados",
@@ -457,12 +470,12 @@ val StringsFR = Strings(
 
     patternTitle = "Motif",
     patternPlaceholder = "ex. s.r.er ou ......",
-    patternHelper = "Utilisez des points pour les lettres inconnues.",
+    patternHelper = "Un point par lettre inconnue. Les accents ne comptent pas.",
     patternCounter = { n -> if (n == 1) "1 caractère" else "$n caractères" },
 
     anagramTitle = "Anagramme",
     anagramPlaceholder = "ex. server",
-    anagramHelper = "Tapez toutes les lettres que vous avez, l'ordre n'a pas d'importance.",
+    anagramHelper = "Tapez toutes les lettres dans l'ordre voulu. Les accents ne comptent pas.",
     anagramCounter = { n -> if (n == 1) "1 lettre" else "$n lettres" },
 
     customWordsTitle = "Mots personnalisés",
@@ -471,8 +484,8 @@ val StringsFR = Strings(
     moreOptionsSubtitle = "Terme de recherche, longueur, lettres exclues",
 
     searchButton = "Rechercher",
-    clearAllButton = "Tout effacer",
-    clearAllContentDescription = "Tout effacer",
+    clearAllButton = "Effacer saisie",
+    clearAllContentDescription = "Effacer saisie",
 
     recentLabel = "Récents",
     recentClear = "Effacer",
@@ -513,10 +526,12 @@ val StringsFR = Strings(
     moreOptionsExcludedHelper = "Les mots contenant ces lettres sont exclus.",
 
     customWordsDialogTitle = "Mots personnalisés",
-    customWordsDialogBody = "Ajoutez temporairement des mots supplémentaires absents de la " +
-        "liste standard, comme des noms propres ou du jargon. Ils sont pris en " +
-        "compte pour Motif et Anagramme.",
+    customWordsDialogBody = "Appuyez sur Ajouter pour enregistrer des mots pour cette langue. Ils sont inclus dans les recherches et conservés lorsque vous effacez la saisie.",
     customWordsDialogPlaceholder = "Mots séparés par des espaces, des virgules ou des retours à la ligne.",
+    customWordsAddButton = "Ajouter",
+    customWordsEmptyText = "Aucun mot personnalisé enregistré.",
+    customWordsCount = { n -> if (n == 1) "1 mot enregistré" else "$n mots enregistrés" },
+    customWordsRemoveDescription = { word -> "Supprimer $word" },
 
     resultsBackContentDescription = "Retour aux champs de recherche",
     resultsTitle = "Résultats",

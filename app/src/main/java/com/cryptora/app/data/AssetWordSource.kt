@@ -24,15 +24,15 @@ import java.nio.charset.StandardCharsets
  * Bron: woordfrequentielijsten uit het pyspellchecker-project (MIT-licentie,
  * © Tyler Barrus), zie README.md voor de volledige attributie.
  */
-class AssetWordSource(context: Context, private val assetName: String = "woorden.txt") : WordSource {
+class AssetWordSource(
+    context: Context,
+    private val assetName: String = "woorden.txt",
+    private val ijAsLetter: Boolean = true
+) : WordSource {
 
     private val appContext = context.applicationContext
 
-    private val words: List<String> by lazy { loadWords() }
-
-    private val byLength: Map<Int, List<String>> by lazy {
-        words.groupBy { it.length }
-    }
+    private val index: IndexedWordSource by lazy { IndexedWordSource(loadWords(), ijAsLetter) }
 
     private fun loadWords(): List<String> {
         val result = ArrayList<String>(350_000)
@@ -48,9 +48,12 @@ class AssetWordSource(context: Context, private val assetName: String = "woorden
         return result
     }
 
-    override fun all(): List<String> = words
+    override fun all(): List<String> = index.all()
 
-    override fun ofLength(length: Int): List<String> = byLength[length].orEmpty()
+    override fun ofLength(length: Int): List<String> = index.ofLength(length)
 
-    override fun size(): Int = words.size
+    override fun size(): Int = index.size()
+
+    override fun candidates(length: Int?, ijAsLetter: Boolean): List<WordEntry> =
+        index.candidates(length, ijAsLetter)
 }

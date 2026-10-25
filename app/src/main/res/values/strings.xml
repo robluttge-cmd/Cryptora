@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cryptora</string>
+    <string name="app_name" translatable="false">Cryptora</string>
     <string name="shortcut_nieuwe_zoekopdracht_kort">Nieuwe zoekopdracht</string>
     <string name="shortcut_nieuwe_zoekopdracht_lang">Start een nieuwe zoekopdracht</string>
 </resources>

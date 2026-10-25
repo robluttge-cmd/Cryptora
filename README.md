@@ -31,6 +31,27 @@ naast de zichtbare appnaam.)
   Android-afhankelijkheden, met unit tests (`app/src/test`) zodat je met
   vertrouwen wijzigingen kan doorvoeren.
 
+## Zoekregels en eigen woorden
+
+- In het Nederlands is `ij` één puzzelletter: `ijs` telt als 2 en `bijl`
+  als 3. Een punt kan ook de hele `ij` vervangen (`.s` vindt `ijs`).
+  In anagrammen blijft `ij` bij elkaar: `sij` vindt `ijs`, `isj` niet.
+  Bij de andere talen blijven `i` en `j` afzonderlijke letters.
+- Accentletters worden voor alle zoekfilters als basisletters gelezen:
+  `cafe` vindt `café` en `naief` vindt `naïef`. Resultaten behouden hun
+  oorspronkelijke schrijfwijze. Apostrofs en koppeltekens in woorden
+  nemen geen puzzelvakje in: `fotos` vindt `foto's`.
+- Patroon, anagram, lengte, zoekterm en uitgesloten letters gebruiken
+  dezelfde regels. De tellers en lettermarkering volgen die ook.
+  `?`, `_` en `-` worden in het patroonveld omgezet naar een punt.
+- Zoeken en Wis invoer staan direct bij beide hoofdvelden. Zoeken kan
+  ook via de zoektoets op het toetsenbord.
+- Open Eigen woorden, voer een of meer woorden in en tik op Toevoegen.
+  De woorden blijven per taal op het toestel bewaard, worden automatisch
+  meegenomen bij het zoeken en verschijnen vóór de standaardwoorden.
+  Verwijder een bewaard woord met het kruisje ernaast. Wis invoer wist
+  alleen de zoekvelden en filters, niet de bewaarde woorden.
+
 ## Vereisten
 
 - [Android Studio](https://developer.android.com/studio) (recentste
@@ -204,7 +225,10 @@ woordenlijst-bestand ooit hernoemt of vervangt.
 ./gradlew test
 ```
 
-Dit draait `SearchEngineTest` (patronen met wildcards, zoektermen, bekende
+Dit draait onder meer `PuzzleSearchTest` (ij, accenten, leestekens,
+patroon/anagram-combinaties en de echte Nederlandse woordenlijst),
+`CustomWordStoreTest` (bewaren, opnieuw openen, verwijderen en taalscheiding),
+`SearchEngineTest` (patronen met wildcards, zoektermen, bekende
 letters, eigen woorden, sortering, foutentolerante fallback) en
 `MatchHighlighterTest` (letter-markering in de resultaten), zonder
 emulator nodig te hebben.

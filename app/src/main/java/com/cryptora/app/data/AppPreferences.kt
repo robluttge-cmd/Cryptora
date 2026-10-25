@@ -51,6 +51,11 @@ class AppPreferences(context: Context) {
     private val prefs = context.applicationContext
         .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+    val eigenWoorden = CustomWordStore(
+        read = { taal -> prefs.getString("eigen_woorden_$taal", null) },
+        write = { taal, woorden -> prefs.edit().putString("eigen_woorden_$taal", woorden).apply() }
+    )
+
     var tekstGrootte: TekstGrootte
         get() {
             val naam = prefs.getString(KEY_TEKSTGROOTTE, null) ?: return TekstGrootte.NORMAAL
