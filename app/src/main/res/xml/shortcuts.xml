@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Statische app-snelkoppeling: lang indrukken op het app-icoon geeft direct
+    de optie om met een lege zoekopdracht te beginnen, zonder eerst de app
+    te hoeven openen en "Alles wissen" te tikken.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="nieuwe_zoekopdracht"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_nieuwe_zoekopdracht_kort"
+        android:shortcutLongLabel="@string/shortcut_nieuwe_zoekopdracht_lang">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.cryptora.app"
+            android:targetClass="com.cryptora.app.MainActivity">
+            <extra
+                android:name="nieuwe_zoekopdracht"
+                android:value="true" />
+        </intent>
+    </shortcut>
+</shortcuts>

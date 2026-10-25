@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Het Cryptora-beeldmerk als op-zichzelf-staande "badge": dezelfde
+    ring+handvat-vorm als ic_launcher_foreground.xml, maar nu gecombineerd
+    met een eigen afgeronde-vierkant-achtergrond (dezelfde twee marineblauwe
+    tinten als het app-icoon) in één bestand — nodig voor plekken waar geen
+    losse adaptive-icon-achtergrondlaag bestaat: de header naast "Cryptora",
+    de Instellingen/Over-sectie en het opstartscherm.
+
+    Vervangt ic_cryptora_mark.xml en ic_cryptora_splash.xml: die twee
+    bevatten allebei een extra "letter-tegel"-flourish linksonder die in de
+    praktijk als rommelige losse blokjes oogde in plaats van als subtiele
+    branding. Deze badge-versie is bewust soberder: alleen de ring+handvat-
+    vorm, met een eigen kleurenkaartje eromheen voor herkenbaarheid — zonder
+    tint-afhankelijkheid, dus altijd in de eigen merkkleuren, ongeacht het
+    actieve licht/donker-thema (zoals bij de meeste merklogo's gebruikelijk
+    is).
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Afgeronde-vierkant kaartje, zelfde twee-tint diagonaal als het app-icoon -->
+    <group>
+        <clip-path
+            android:pathData="M20,0 L88,0 A20,20 0 0 1 108,20 L108,88 A20,20 0 0 1 88,108 L20,108 A20,20 0 0 1 0,88 L0,20 A20,20 0 0 1 20,0 Z" />
+        <path
+            android:fillColor="#0B1220"
+            android:pathData="M0,0 L108,0 L108,108 L0,108 Z" />
+        <path
+            android:fillColor="#131C2E"
+            android:pathData="M0,54 L108,0 L108,108 L0,108 Z" />
+    </group>
+    <!-- Vergrootglas-lens: open ring ("C"-vorm), gat rechts waar het handvat begint -->
+    <path
+        android:strokeColor="#F3F5F9"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M70.96,60.60 A20,20 0 1,1 70.96,39.40" />
+    <!-- Vergrootglas: steel, in het merk-blauw als accent -->
+    <path
+        android:strokeColor="#5B7CFA"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M70.96,60.60 L84.53,69.08" />
+</vector>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Cryptora-beeldmerk (v2): een vergrootglas waarvan de lens bewust een
+    opening heeft aan de rechterkant, zodat de vorm tegelijk leest als een
+    "C" (voor Cryptora) én als een vergrootglas (het handvat sluit direct
+    aan op de opening van de "C"). Twee kleuren voor meer karakter: de ring
+    in bijna-wit, het handvat in het merk-blauw als accent — in plaats van
+    de eerdere platte eenkleurige versie mét losse letter-tegels (die er in
+    de praktijk als rommelige losse blokjes uitzagen). Bewust minimalistisch
+    gehouden voor leesbaarheid op klein formaat (Play Store-zoekresultaten,
+    app-lade).
+
+    Blijft ruim binnen het canvas (108x108) en dicht bij de veilige cirkel
+    (straal 33dp rond het midden 54,54) van het adaptive-icon-canvas; het
+    handvat steekt er net als bij de vorige versie een fractie voorbij, wat
+    voor een diagonaal element als dit gebruikelijk en onopvallend is.
+
+    Zie ook drawable/ic_cryptora_badge.xml: dezelfde vorm, nu gecombineerd
+    met de eigen achtergrond-tegel (i.p.v. de losse adaptive-icon-laag),
+    hergebruikt in de header/Instellingen/opstartscherm van de app zelf.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Vergrootglas-lens: open ring ("C"-vorm), gat rechts waar het handvat begint -->
+    <path
+        android:strokeColor="#F3F5F9"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M70.96,60.60 A20,20 0 1,1 70.96,39.40" />
+    <!-- Vergrootglas: steel, in het merk-blauw als accent -->
+    <path
+        android:strokeColor="#5B7CFA"
+        android:strokeWidth="10"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:pathData="M70.96,60.60 L84.53,69.08" />
+</vector>

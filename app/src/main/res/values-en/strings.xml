@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Vertalingen voor systeem-getoonde tekst (app-naam, snelkoppelingmenu),
+    die de systeemtaal van het toestel volgt — los van de handmatige
+    taalschakelaar in Instellingen die de tekst BINNEN de app bepaalt (zie
+    com.cryptora.app.ui.Strings). "app_name" hoeft hier niet apart
+    vertaald te worden: het is dezelfde merknaam in beide talen, dus die
+    valt automatisch terug op values/strings.xml.
+-->
+<resources>
+    <string name="shortcut_nieuwe_zoekopdracht_kort">New search</string>
+    <string name="shortcut_nieuwe_zoekopdracht_lang">Start a new search</string>
+</resources>
