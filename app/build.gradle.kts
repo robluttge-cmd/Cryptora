@@ -3,26 +3,43 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// Sleutels en wachtwoorden uitsluitend via de lokale omgeving/CI, nooit in Git.
+val uploadSigningNames = listOf(
+    "CRYPTORA_KEYSTORE_PATH", "CRYPTORA_STORE_PASSWORD",
+    "CRYPTORA_KEY_ALIAS", "CRYPTORA_KEY_PASSWORD"
+)
+val uploadSigning = uploadSigningNames.associateWith { providers.environmentVariable(it).orNull }
+val hasUploadSigning = uploadSigning.values.all { !it.isNullOrBlank() }
+
 android {
     namespace = "com.cryptora.app"
-    // NOTE: Google Play requires new apps/updates to target Android 16 (API 36)
-    // from 31 augustus 2026. Bump compileSdk/targetSdk to 36 in Android Studio
-    // (it will offer to download the platform) before your final release build.
-    // See README.md, sectie "Voor je publiceert".
-    compileSdk = 35
+    // API 36 is de gekozen releasebasis. Controleer de actuele Play-eis bij indiening.
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.cryptora.app"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0.0"
 
         vectorDrawables { useSupportLibrary = true }
     }
 
+    signingConfigs {
+        if (hasUploadSigning) {
+            create("playUpload") {
+                storeFile = file(uploadSigning.getValue("CRYPTORA_KEYSTORE_PATH")!!)
+                storePassword = uploadSigning.getValue("CRYPTORA_STORE_PASSWORD")
+                keyAlias = uploadSigning.getValue("CRYPTORA_KEY_ALIAS")
+                keyPassword = uploadSigning.getValue("CRYPTORA_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasUploadSigning) signingConfig = signingConfigs.getByName("playUpload")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -66,10 +83,9 @@ dependencies {
 
     // Play Store "vraag om een beoordeling"-flow (officiële, niet-opdringerige
     // In-App Review API — geen eigen popup, Google bepaalt zelf of/wanneer de
-    // systeemdialoog daadwerkelijk verschijnt). review-ktx heeft de gewone
-    // review-library zelf als runtime-afhankelijkheid nodig.
+    // systeemdialoog daadwerkelijk verschijnt). Gebruik de publieke Task-API
+    // rechtstreeks; de KTX-wrapper bevat ontbrekende annotaties bij R8.
     implementation("com.google.android.play:review:2.0.2")
-    implementation("com.google.android.play:review-ktx:2.0.2")
 
     testImplementation("junit:junit:4.13.2")
 
@@ -79,4 +95,28 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// bundleRelease blijft bruikbaar voor een ongetekende technische controle.
+// Gebruik bundlePlayRelease voor een echte upload: ontbrekende signing geeft een fout.
+val verifyPlayReleaseSigning = tasks.register("verifyPlayReleaseSigning") {
+    group = "verification"
+    description = "Controleert of de uploadkeystore veilig via de omgeving is geconfigureerd."
+    doLast {
+        val missing = uploadSigning.filterValues { it.isNullOrBlank() }.keys
+        if (missing.isNotEmpty()) {
+            throw GradleException("Release niet uploadklaar. Ontbrekende omgevingsvariabelen: " + missing.joinToString())
+        }
+        if (!file(uploadSigning.getValue("CRYPTORA_KEYSTORE_PATH")!!).isFile) {
+            throw GradleException("Release niet uploadklaar: de opgegeven uploadkeystore bestaat niet.")
+        }
+    }
+}
+tasks.matching { it.name == "bundleRelease" }.configureEach {
+    mustRunAfter(verifyPlayReleaseSigning)
+}
+tasks.register("bundlePlayRelease") {
+    group = "build"
+    description = "Bouwt een ondertekende App Bundle voor Google Play met de eigen uploadkey."
+    dependsOn(verifyPlayReleaseSigning, "bundleRelease")
 }

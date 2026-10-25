@@ -60,6 +60,8 @@ data class Strings(
     val settingsAboutTitle: String,
     val settingsAboutBody: String,
     val settingsVersionPrefix: String,
+    val privacyTitle: String,
+    val privacyBody: String,
 
     val moreOptionsSearchTermLabel: String,
     val moreOptionsSearchTermPlaceholder: String,
@@ -158,6 +160,8 @@ val StringsNL = Strings(
         "lettertype is Manrope (SIL Open Font License, © The Manrope Project " +
         "Authors).",
     settingsVersionPrefix = "Versie",
+    privacyTitle = "Privacy",
+    privacyBody = "Cryptora doorzoekt woorden volledig op je toestel. De app heeft geen internetpermissie, advertenties of analytics. De ontwikkelaar ontvangt geen zoekopdrachten of eigen woorden.\n\nDe app bewaart recente zoekopdrachten, eigen woorden per taal en je instellingen lokaal. Wis recente opdrachten via Recent → Wissen en verwijder eigen woorden met het kruisje. Wis invoer verwijdert je bewaarde woorden niet. Je kunt alle appgegevens verwijderen via de Android-instellingen of door de app te verwijderen. Automatische back-up van deze gegevens is uitgeschakeld.\n\nEen eventuele beoordelingsvraag wordt afgehandeld door Google Play; daarop is het privacybeleid van Google van toepassing.",
 
     moreOptionsSearchTermLabel = "Zoekterm",
     moreOptionsSearchTermPlaceholder = "bijv. serv",
@@ -276,6 +280,8 @@ val StringsEN = Strings(
         "pyspellchecker project (MIT license, © Tyler Barrus). The font is " +
         "Manrope (SIL Open Font License, © The Manrope Project Authors).",
     settingsVersionPrefix = "Version",
+    privacyTitle = "Privacy",
+    privacyBody = "Cryptora searches words entirely on your device. It has no internet permission, ads or analytics. The developer receives no searches or custom words.\n\nRecent searches, custom words per language and preferences are stored locally. Clear recent searches with Recent → Clear and remove custom words with the cross. Clear input keeps saved words. Remove all app data in Android settings or uninstall the app. Automatic backup of this data is disabled.\n\nAn optional rating prompt is handled by Google Play under Google’s privacy policy.",
 
     moreOptionsSearchTermLabel = "Search term",
     moreOptionsSearchTermPlaceholder = "e.g. serv",
@@ -395,6 +401,8 @@ val StringsES = Strings(
         "Barrus). La tipografía es Manrope (SIL Open Font License, © The " +
         "Manrope Project Authors).",
     settingsVersionPrefix = "Versión",
+    privacyTitle = "Privacidad",
+    privacyBody = "Cryptora busca palabras en tu dispositivo. No tiene permiso de internet, anuncios ni analítica. El desarrollador no recibe búsquedas ni palabras propias.\n\nLas búsquedas recientes, las palabras por idioma y los ajustes se guardan localmente. Borra el historial en Recientes → Borrar y las palabras con la cruz. Borrar campos conserva las palabras guardadas. Puedes borrar todos los datos en los ajustes de Android o desinstalando la app. La copia de seguridad automática está desactivada.\n\nGoogle Play gestiona las solicitudes de valoración según la política de privacidad de Google.",
 
     moreOptionsSearchTermLabel = "Término de búsqueda",
     moreOptionsSearchTermPlaceholder = "p. ej. serv",
@@ -514,6 +522,8 @@ val StringsFR = Strings(
         "police utilisée est Manrope (SIL Open Font License, © The Manrope " +
         "Project Authors).",
     settingsVersionPrefix = "Version",
+    privacyTitle = "Confidentialité",
+    privacyBody = "Cryptora recherche des mots sur votre appareil. Aucune autorisation internet, publicité ou analyse d’usage. Le développeur ne reçoit ni recherches ni mots personnalisés.\n\nLes recherches récentes, les mots par langue et les préférences sont conservés localement. Effacez l’historique via Récents → Effacer et les mots avec la croix. Effacer saisie conserve les mots enregistrés. Supprimez toutes les données dans les paramètres Android ou en désinstallant l’application. La sauvegarde automatique est désactivée.\n\nGoogle Play gère les demandes d’avis selon les règles de confidentialité de Google.",
 
     moreOptionsSearchTermLabel = "Terme de recherche",
     moreOptionsSearchTermPlaceholder = "ex. serv",

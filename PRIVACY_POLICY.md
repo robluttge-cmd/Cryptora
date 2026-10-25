@@ -1,44 +1,63 @@
 # Privacyverklaring — Cryptora
 
-_Laatst bijgewerkt: 13 juli 2026_
+Laatst bijgewerkt: 25 oktober 2026
 
-Cryptora ("de app") is een hulpmiddel om Nederlandse, Engelse, Spaanse en
-Franse woorden te zoeken bij het oplossen van cryptogrammen.
+**Concept: vul vóór publicatie de verantwoordelijke en het contactadres in.**
 
-## Welke gegevens verzamelt de app?
+Verantwoordelijke ontwikkelaar: **[ONTWIKKELAARSNAAM]**
 
-Geen. De app:
+Contact voor vragen over privacy: **[SUPPORTEMAIL]**
 
-- werkt volledig offline en heeft geen internettoegang nodig;
-- verstuurt geen gegevens naar servers van de ontwikkelaar of derden;
-- vraagt geen enkele Android-permissie (geen locatie, camera,
-  contacten, internet, etc.);
-- bewaart niets buiten je eigen toestel: er wordt nooit iets naar
-  een server of naar derden verstuurd.
+Cryptora (`com.cryptora.app`) is een offline woordzoeker voor Nederlandse,
+Engelse, Spaanse en Franse woordpuzzels. De app heeft geen account nodig.
 
-## Wat wordt er lokaal op je toestel bewaard?
+## Verzameling en verstrekking
 
-Uitsluitend om de app prettig te laten werken, en altijd alleen op je
-eigen toestel:
+De ontwikkelaar verzamelt en ontvangt geen persoonsgegevens, zoekopdrachten of
+eigen woorden via Cryptora. De app heeft geen internetpermissie en bevat geen
+advertenties, analytics of tracking. Er is geen toegang tot locatie, camera,
+microfoon of contacten nodig.
 
-- je recente zoekopdrachten (patroon, zoekterm, uitgesloten letters,
-  lengte) — blijven bewaard totdat je ze zelf wist via "Wis
-  geschiedenis" in Instellingen;
-- je voorkeuren, zoals thema, tekstgrootte, taal en sorteervolgorde.
+## Gegevens op je toestel
 
-"Eigen woorden" die je tijdelijk toevoegt worden niet bewaard: die
-verdwijnen zodra je de app sluit.
+Om de app te laten werken worden lokaal opgeslagen:
 
-## Reclame en tracking
+- Recente zoekopdrachten, inclusief patroon, anagramletters, zoekterm,
+  uitgesloten letters, lengte en gekozen taal.
+- Eigen woorden, afzonderlijk per taal. Deze blijven bewaard na afsluiten.
+- Voorkeuren voor taal, thema, tekstgrootte en sortering.
+- Of de uitleg is bekeken en lokale tellers/status voor de beoordelingsvraag.
 
-De app bevat geen advertenties, analytics- of trackingsoftware van
-derden.
+Deze informatie wordt niet naar de ontwikkelaar verzonden. Automatische
+Android-back-up van de app is uitgeschakeld; de lokale voorkeuren zijn ook
+uitgesloten van de geconfigureerde cloudback-up en toesteloverdracht.
 
----
+## Bewaren en verwijderen
 
-*Opmerking voor de ontwikkelaar: dit is een concepttekst. Host deze
-tekst op een openbaar bereikbare URL (bv. GitHub Pages of een Google
-Site), en voeg die URL toe in Google Play Console onder App content >
-Privacybeleid. Mocht je later toch functionaliteit toevoegen die wél
-gegevens verzamelt of verstuurt (bijvoorbeeld advertenties of een
-account), werk deze tekst dan bij vóórdat je de update publiceert.*
+Je verwijdert recente opdrachten via **Recent → Wissen** en eigen woorden via
+het kruisje in **Eigen woorden**. **Wis invoer** wist uitsluitend de zoekvelden
+en filters en verwijdert geen bewaarde eigen woorden.
+
+Je kunt alle lokale appgegevens verwijderen via de Android-appinstellingen
+(**Opslag → Gegevens wissen**) of door Cryptora te verwijderen. De benamingen
+kunnen per toestel verschillen. Er worden geen kopieën bij de ontwikkelaar
+bewaard. De app kan informatie die je zelf elders hebt gekopieerd niet wissen.
+
+## Klembord en Google Play
+
+Wanneer je op een zoekresultaat tikt, kopieert de app dat woord naar het
+Android-klembord. Je bepaalt zelf waar je het daarna plakt; voor andere apps
+gelden hun eigen privacyregels.
+
+Cryptora kan via de officiële Google Play-functie vragen om een beoordeling.
+Google Play verwerkt eventuele beoordelingen volgens het
+[privacybeleid van Google](https://policies.google.com/privacy). De ontwikkelaar
+ontvangt via de app geen zoekopdrachten of eigen woorden bij die vraag.
+Ook voor installatie en distributie via Google Play gelden de voorwaarden en
+het privacybeleid van Google.
+
+## Wijzigingen en contact
+
+Bij wijzigingen in gegevensgebruik wordt deze verklaring aangepast vóór een
+nieuwe versie wordt gepubliceerd. Voor privacyvragen kun je contact opnemen
+met de hierboven vermelde ontwikkelaar via het vermelde e-mailadres.

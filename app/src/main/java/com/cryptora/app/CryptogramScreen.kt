@@ -99,8 +99,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.play.core.ktx.launchReview
-import com.google.android.play.core.ktx.requestReview
 import com.google.android.play.core.review.ReviewManagerFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -151,6 +149,7 @@ fun CryptogramScreen(viewModel: CryptogramViewModel = viewModel()) {
     val density = LocalDensity.current
     val focusManager = LocalFocusManager.current
     val context = LocalContext.current
+    var toonPrivacy by remember { mutableStateOf(false) }
     var toonInstellingen by remember { mutableStateOf(false) }
     var toonHelpHandmatig by remember { mutableStateOf(false) }
     var toonMeerOpties by remember { mutableStateOf(false) }
@@ -189,18 +188,28 @@ fun CryptogramScreen(viewModel: CryptogramViewModel = viewModel()) {
     LaunchedEffect(viewModel.vraagOmBeoordeling) {
         if (viewModel.vraagOmBeoordeling) {
             val activity = context.findActivity()
-            if (activity != null) {
+            if (activity == null) {
+                viewModel.beoordelingAfgehandeld()
+            } else {
                 try {
                     val manager = ReviewManagerFactory.create(context)
-                    val reviewInfo = manager.requestReview()
-                    manager.launchReview(activity, reviewInfo)
-                } catch (e: Exception) {
-                    // Mag de app nooit laten crashen of de gebruiker storen;
-                    // gewoon overslaan als er iets misgaat (bv. geen Play
-                    // Store beschikbaar op dit toestel).
+                    manager.requestReviewFlow().addOnCompleteListener { request ->
+                        if (!request.isSuccessful || activity.isFinishing || activity.isDestroyed) {
+                            viewModel.beoordelingAfgehandeld()
+                        } else {
+                            try {
+                                manager.launchReviewFlow(activity, request.result)
+                                    .addOnCompleteListener { viewModel.beoordelingAfgehandeld() }
+                            } catch (_: Exception) {
+                                viewModel.beoordelingAfgehandeld()
+                            }
+                        }
+                    }
+                } catch (_: Exception) {
+                    // Een ontbrekende Play Store of mislukte review mag zoeken niet blokkeren.
+                    viewModel.beoordelingAfgehandeld()
                 }
             }
-            viewModel.beoordelingAfgehandeld()
         }
     }
 
@@ -304,8 +313,16 @@ fun CryptogramScreen(viewModel: CryptogramViewModel = viewModel()) {
                 onTekstGrootteKies = viewModel::zetTekstGrootte,
                 taal = viewModel.taal,
                 onTaalKies = viewModel::zetTaal,
+                onPrivacyClick = {
+                    toonInstellingen = false
+                    toonPrivacy = true
+                },
                 onSluiten = { toonInstellingen = false }
             )
+        }
+
+        if (toonPrivacy) {
+            PrivacyDialog(onSluiten = { toonPrivacy = false })
         }
 
         if (toonMeerOpties) {
@@ -923,6 +940,7 @@ private fun InstellingenDialog(
     onTekstGrootteKies: (TekstGrootte) -> Unit,
     taal: Taal,
     onTaalKies: (Taal) -> Unit,
+    onPrivacyClick: () -> Unit,
     onSluiten: () -> Unit
 ) {
     val t = LocalStrings.current
@@ -946,7 +964,7 @@ private fun InstellingenDialog(
         textContentColor = MaterialTheme.colorScheme.onBackground,
         title = { Text(t.settingsTitle) },
         text = {
-            Column {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
                     text = t.settingsLanguageTitle,
                     style = MaterialTheme.typography.titleMedium,
@@ -997,6 +1015,8 @@ private fun InstellingenDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
+                TextButton(onClick = onPrivacyClick) { Text(t.privacyTitle) }
+
                 if (versienaam != null) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
@@ -1007,6 +1027,17 @@ private fun InstellingenDialog(
                 }
             }
         }
+    )
+}
+
+@Composable
+private fun PrivacyDialog(onSluiten: () -> Unit) {
+    val t = LocalStrings.current
+    AlertDialog(
+        onDismissRequest = onSluiten,
+        confirmButton = { TextButton(onClick = onSluiten) { Text(t.settingsClose) } },
+        title = { Text(t.privacyTitle) },
+        text = { Text(t.privacyBody, modifier = Modifier.verticalScroll(rememberScrollState())) }
     )
 }
 

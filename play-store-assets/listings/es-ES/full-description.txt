@@ -1,0 +1,18 @@
+Una ayuda para crucigramas y juegos de palabras. Busca con las letras que conoces en español, inglés, neerlandés y francés.
+
+• Patrón: escribe las letras conocidas y un punto por cada letra desconocida.
+• Anagrama: usa exactamente las letras indicadas en otro orden. Puedes combinarlo con un patrón.
+• Más opciones: filtra por secuencia de letras, longitud y letras excluidas.
+• Si no hay coincidencia exacta con el patrón, la app puede sugerir palabras con una letra distinta.
+
+Los acentos se leen como letras base: cafe encuentra café. Los resultados conservan su escritura original. En neerlandés, ij cuenta como una sola letra y se mantiene unido en los anagramas; en los demás idiomas, i y j son independientes.
+
+Guarda nombres y términos propios por idioma. Se incluyen automáticamente y tienen prioridad en los resultados. Puedes eliminarlos por separado; borrar los campos conserva las palabras guardadas.
+
+Los botones de búsqueda y borrado están junto a los campos. Toca un resultado para copiarlo. Consulta búsquedas recientes y cambia la ordenación, el idioma, el tema y el tamaño del texto.
+
+La búsqueda funciona sin conexión, cuenta ni suscripción. Sin anuncios ni analítica. El historial, las palabras propias y los ajustes permanecen en el dispositivo. La información de privacidad está en Ajustes.
+
+Cryptora busca letras y patrones. No interpreta pistas crípticas ni garantiza que todos los posibles resultados estén en sus listas.
+
+Listas basadas en pyspellchecker (licencia MIT, © Tyler Barrus). Tipografía Manrope bajo SIL Open Font License.

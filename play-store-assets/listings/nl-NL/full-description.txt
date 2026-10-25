@@ -1,0 +1,23 @@
+Een hulpmiddel naast je cryptogram, kruiswoordpuzzel of ander woordraadsel. Cryptora doorzoekt woordenlijsten op basis van de letters die je al kent, in het Nederlands, Engels, Spaans en Frans.
+
+ZOEK MET WAT JE WEET
+• Patroon: zet bekende letters op hun plaats en gebruik een punt voor iedere onbekende letter.
+• Anagram: gebruik precies de opgegeven letters, in een andere volgorde. Combineer dit eventueel met een patroon.
+• Meer opties: filter op een letterreeks, woordlengte en uitgesloten letters.
+• Geen exacte patroonmatch? De app kan woorden tonen met één afwijkende puzzelletter.
+
+GEMAAKT VOOR PUZZELLETTERS
+In het Nederlands telt ij als één puzzelletter: ijs telt als twee. In anagrammen blijft ij bij elkaar. Accenten worden gelezen als basisletters: cafe vindt café en naief vindt naïef. Gevonden woorden behouden hun oorspronkelijke schrijfwijze.
+
+JE EIGEN WOORDEN
+Voeg namen of vaktermen toe aan een blijvende woordenlijst per taal. Eigen woorden worden automatisch meegenomen en krijgen voorrang in de resultaten. Je kunt ze afzonderlijk verwijderen. Wis invoer behoudt je opgeslagen woorden.
+
+PRETTIG IN GEBRUIK
+Zoeken en wissen staan bij de invoervelden. Tik op een resultaat om het te kopiëren. Kies sortering op gebruik of alfabet, bekijk recente opdrachten en stel taal, thema en tekstgrootte in.
+
+OFFLINE
+De woordzoeker heeft geen internetverbinding, account of abonnement nodig. Geen advertenties of analytics. Zoekgeschiedenis, eigen woorden en voorkeuren worden lokaal op je toestel bewaard. Privacyuitleg staat in de instellingen.
+
+Cryptora zoekt op letters en patronen. De app interpreteert geen cryptische omschrijvingen en garandeert niet dat ieder puzzelantwoord in de woordenlijst staat.
+
+De woordenlijsten zijn gebaseerd op pyspellchecker (MIT-licentie, © Tyler Barrus). Het lettertype Manrope valt onder de SIL Open Font License.

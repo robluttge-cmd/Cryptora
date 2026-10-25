@@ -1,0 +1,18 @@
+Un compagnon pour les mots croisés et jeux de lettres. Recherchez avec les lettres connues en français, anglais, néerlandais et espagnol.
+
+• Motif : saisissez les lettres connues et un point par lettre inconnue.
+• Anagramme : utilisez exactement les lettres indiquées dans un autre ordre. Combinez une anagramme et un motif.
+• Plus d’options : filtrez par suite de lettres, longueur et lettres exclues.
+• Sans correspondance exacte avec le motif, l’application peut proposer des mots différant d’une lettre.
+
+Les accents sont lus comme des lettres de base : cafe trouve café. Les résultats gardent leur orthographe. En néerlandais, ij compte pour une lettre et reste groupé dans les anagrammes ; dans les autres langues, i et j restent séparés.
+
+Enregistrez vos noms et termes personnels par langue. Ils sont inclus automatiquement et prioritaires dans les résultats. Supprimez-les individuellement ; effacer la saisie conserve les mots enregistrés.
+
+Les boutons de recherche et d’effacement sont près des champs. Touchez un résultat pour le copier. Retrouvez les recherches récentes et choisissez l’ordre des résultats, la langue, le thème et la taille du texte.
+
+La recherche fonctionne hors ligne, sans compte ni abonnement. Aucune publicité ou analyse d’usage. L’historique, les mots et les préférences restent sur votre appareil. Les informations de confidentialité sont dans les paramètres.
+
+Cryptora recherche des lettres et des motifs. L’application n’interprète pas les définitions cryptiques et ne garantit pas la présence de chaque réponse possible.
+
+Listes basées sur pyspellchecker (licence MIT, © Tyler Barrus). Police Manrope sous SIL Open Font License.

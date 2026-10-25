@@ -1,0 +1,1 @@
+Busca palabras por patrón o anagrama. Cuatro idiomas, sin conexión.

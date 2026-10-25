@@ -1,0 +1,15 @@
+# Lokale Android/Gradle-uitvoer
+.gradle/
+**/build/
+local.properties
+.idea/
+*.iml
+
+# Ondertekening en lokale geheimen
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+.env
+.env.*
+!.env.example

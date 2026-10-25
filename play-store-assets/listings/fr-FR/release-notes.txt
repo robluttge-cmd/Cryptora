@@ -1,0 +1,1 @@
+Recherche sans accents, mots personnels conservés par langue et boutons près des champs. En néerlandais, ij compte pour une lettre.

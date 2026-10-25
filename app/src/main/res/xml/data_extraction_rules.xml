@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- De app slaat geen gebruikersdata op; er is dus niets om te back-uppen. -->
+<!-- Zoekgeschiedenis, eigen woorden en voorkeuren blijven lokaal. -->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="sharedpref" />
         <exclude domain="database" />
     </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" />
+        <exclude domain="database" />
+    </device-transfer>
 </data-extraction-rules>

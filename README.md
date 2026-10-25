@@ -54,17 +54,18 @@ naast de zichtbare appnaam.)
 
 ## Vereisten
 
-- [Android Studio](https://developer.android.com/studio) (recentste
-  stabiele versie — "Ladybug" of nieuwer)
-- JDK 17 (wordt meestal meegeleverd met Android Studio)
+- [Android Studio](https://developer.android.com/studio), met ondersteuning
+  voor Android Gradle Plugin 9.2.1.
+- Een volledige JDK 21 voor de vastgezette Gradle-daemon; Java-broncode blijft
+  gecompileerd met Java 17-compatibiliteit.
+- Android SDK 36 en Build Tools 36.0.0.
 
 ## Project openen
 
 1. Open Android Studio → **Open** → kies de map `Cryptora`.
-2. Laat Gradle synchroniseren (eerste keer kan een paar minuten duren,
-   Android Studio downloadt zelf de juiste Gradle-versie als
-   `gradle/wrapper/gradle-wrapper.jar` nog ontbreekt — dat is normaal bij
-   een handmatig aangemaakt project).
+2. Laat Gradle synchroniseren. De wrapper staat in de repository en downloadt
+   de vastgezette Gradle-versie. Installeer de gevraagde SDK-componenten.
+   De eerste synchronisatie en build kunnen enkele minuten duren.
 3. Run op een emulator of fysiek toestel via de groene ▶-knop.
 
 ## Projectstructuur
@@ -187,7 +188,7 @@ splash-attributen los in het hoofdthema te zetten.
 **Play Store-beoordeling**: na een paar succesvolle zoekopdrachten
 (zie `REVIEW_DREMPEL` in `CryptogramViewModel.kt`) start de app eenmalig
 (per installatie) de officiële In-App Review-flow
-(`com.google.android.play:review`/`review-ktx`). Dit is bewust geen eigen
+(`com.google.android.play:review`, via de publieke Task-API). Dit is bewust geen eigen
 popup: Google bepaalt zelf of/wanneer de systeemdialoog daadwerkelijk
 verschijnt, dus dit voelt nooit opdringerig. Test dit via de instructies op
 <https://developer.android.com/guide/playcore/in-app-review/test> — in een
@@ -233,49 +234,30 @@ letters, eigen woorden, sortering, foutentolerante fallback) en
 `MatchHighlighterTest` (letter-markering in de resultaten), zonder
 emulator nodig te hebben.
 
-## Voor je publiceert
+## Voorbereiding voor Google Play
 
-1. **Target API-niveau**: Google Play vereist voor nieuwe apps en updates
-   vanaf **31 augustus 2026** minimaal Android 16 (API 36). Zet in
-   `app/build.gradle.kts` `compileSdk` en `targetSdk` van 35 naar 36
-   (Android Studio biedt aan de benodigde SDK-versie te downloaden).
-2. **App-naam, package-naam, kleuren**: de app gebruikt `applicationId`/
-   `namespace` "com.cryptora.app" (in `app/build.gradle.kts`). Wil je dit nog
-   wijzigen, doe dat vóór de eerste publicatie — daarna kan het niet meer.
-   Kleuren pas je aan in `ui/theme/Color.kt`.
-3. **Signing/keystore**: genereer een release-keystore en configureer een
-   `signingConfig` in `app/build.gradle.kts` (Android Studio: Build >
-   Generate Signed App Bundle/APK, volg de wizard — bewaar de keystore
-   en wachtwoorden veilig, zonder deze kan je nooit meer een update
-   uitbrengen onder dezelfde app).
-4. **Bouw een App Bundle**: Build > Generate Signed App Bundle/APK > kies
-   Android App Bundle (.aab) — dit is het formaat dat de Play Store wil.
-5. **Privacybeleid & Data safety-formulier**: Play Console vereist altijd
-   een openbare URL naar een privacyverklaring én een ingevuld
-   "Data safety"-formulier — ook als de app, zoals deze, helemaal geen
-   data verzamelt (dan vul je overal "Nee" in). Gebruik `PRIVACY_POLICY.md`
-   als basis en host 'm ergens publiek (bv. een simpele GitHub Pages-pagina
-   of Google Site). Zorg dat wat je in het formulier invult exact overeenkomt
-   met de privacyverklaring — een mismatch is een veelgemaakte reden voor
-   afwijzing.
-6. **Store-vermelding**: zie `STORE_LISTING.md` voor een concepttitel,
-   korte/lange beschrijving, het 512×512-icoon in
-   `play-store-assets/icon-512.png` en de 1024×500 feature graphic in
-   `play-store-assets/feature-graphic-1024x500.png`. Screenshots (2–4,
-   leeg + met resultaten) moet je zelf nog maken op een emulator/toestel.
-7. **Contentclassificatie & doelgroep**: vul in Play Console de
-   contentvragenlijst in (dit is een woordenboek/puzzelhulp-app zonder
-   gebruikersgegevens, gebruikersinteractie of gevoelige content — dat
-   maakt de vragenlijst meestal snel doorlopen).
-8. **Contact-e-mailadres**: op verzoek bevat de app bewust géén "Vragen of
-   problemen?"-link in Instellingen — er wordt dus geen contactadres
-   getoond. Wil je dit later alsnog toevoegen, dan kan dat via een nieuw
-   veld in `ui/Strings.kt` en een `Text`/`clickable` in `InstellingenDialog`
-   (`CryptogramScreen.kt`), naar het voorbeeld van de andere Instellingen-
-   secties.
-9. **Release-build testen**: `proguard-rules.pro` bevat nu een aantal
-   `-keep`-regels als extra zekerheid, maar dit project is nooit als
-   echte release-build (met minify/R8 aan) gebouwd of getest — dat kon
-   niet vanuit de omgeving waarin dit is opgezet. Bouw zelf een keer
-   Build > Generate Signed App Bundle/APK en test die build grondig op
-   een toestel vóórdat je 'm publiceert.
+Zie [PLAY_RELEASE.md](PLAY_RELEASE.md) voor de releasebuild, je eigen uploadkey,
+Play App Signing, privacyverklaring, toesteltests en de resterende Console-stappen.
+De technische releasecontrole gebruikt API 36, R8 en resource shrinking.
+
+```sh
+./gradlew --max-workers=2 :app:testDebugUnitTest :app:lintRelease :app:bundleRelease
+```
+
+Zonder eigen signing-instellingen is de resulterende AAB ongetekend en niet klaar
+voor upload. `./gradlew :app:bundlePlayRelease` controleert de vereiste
+ondertekening via omgevingsvariabelen en weigert te bouwen als die ontbreekt.
+Bewaar de keystore buiten Git. `.gitignore` sluit lokale builds en sleutelbestanden uit.
+
+- [STORE_LISTING.md](STORE_LISTING.md): bijgewerkte teksten voor vier talen en
+  de nog te maken screenshots.
+- [PRIVACY_POLICY.md](PRIVACY_POLICY.md): concept met de huidige lokale opslag;
+  ontwikkelaarsnaam en supportadres moeten nog worden ingevuld.
+- [docs/privacy.html](docs/privacy.html): bijbehorende conceptwebpagina, pas na
+  invullen publiceren op een openbare URL.
+- Instellingen → Privacy: lokale uitleg over gegevensgebruik en verwijderen.
+- `.github/workflows/android-release.yml`: tests, release-lint en een ongetekende
+  App Bundle bij wijzigingen op `main` en pull requests. Publiceert niets naar Play.
+
+De actuele Play-eisen moeten vóór indiening in Play Console worden bevestigd;
+een geslaagde lokale build vervangt geen ondertekende toesteltest of goedkeuring.

@@ -15,8 +15,6 @@
 -keep class com.cryptora.app.data.SearchEngine$Query { *; }
 -keep class com.cryptora.app.data.SearchEngine$Result { *; }
 
-# LET OP: dit bestand is met zorg samengesteld maar nog NIET getest tegen een
-# echte release-build (de sandbox waarin dit project is opgezet heeft geen
-# Android-SDK/Gradle-toegang). Bouw zelf een keer een release-APK/AAB
-# (Build > Generate Signed App Bundle/APK) en test 'm op een toestel vóór
-# publicatie, om zeker te weten dat minify/shrink niets breekt.
+# De release wordt met R8 en resource shrinking gebouwd en statisch gecontroleerd.
+# Test ook de ondertekende release op echte toestellen vóór publicatie;
+# een geslaagde build vervangt geen functionele toesteltest.

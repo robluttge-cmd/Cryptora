@@ -1,0 +1,1 @@
+Accent-insensitive word searches, persistent custom words per language and search/clear controls beside the input. Dutch ij counts as one puzzle letter.

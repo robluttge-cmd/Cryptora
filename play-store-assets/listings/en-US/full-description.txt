@@ -1,0 +1,23 @@
+A companion for crosswords and word puzzles. Cryptora searches word lists using the letters you already know, in English, Dutch, Spanish and French.
+
+SEARCH YOUR WAY
+• Pattern: enter known letters and a dot for each unknown letter.
+• Anagram: find words using exactly your letters in a different order. Combine an anagram with a pattern.
+• More options: filter by a letter sequence, word length and excluded letters.
+• If a pattern has no exact match, suggestions may differ by one puzzle letter.
+
+PUZZLE LETTERS
+Accents are treated as base letters: cafe finds café. Results retain their original spelling. In Dutch, ij counts as one puzzle letter and stays together in anagrams. In other languages, i and j remain separate letters.
+
+YOUR OWN WORDS
+Save names and specialist terms per language. Custom words are automatically included and prioritized in results. Remove words individually; clearing the input keeps your saved vocabulary.
+
+EASY TO USE
+Search and clear buttons sit beside the input area. Tap a result to copy it. Choose source-frequency or alphabetical sorting, revisit recent searches and change language, theme and text size.
+
+OFFLINE
+No internet connection, account or subscription is needed for word searches. No ads or analytics. History, custom words and preferences stay on your device. Privacy information is available in Settings.
+
+Cryptora searches letters and patterns. It does not interpret cryptic clues or guarantee that every puzzle answer is in its dictionaries.
+
+Word lists are based on pyspellchecker (MIT license, © Tyler Barrus). Manrope is licensed under the SIL Open Font License.

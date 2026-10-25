@@ -1,0 +1,1 @@
+Búsqueda sin acentos, palabras propias guardadas por idioma y botones junto a los campos. En neerlandés, ij cuenta como una sola letra.

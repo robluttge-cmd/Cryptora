@@ -1,0 +1,1 @@
+Find words by pattern or anagram. Four languages, fully offline.
